@@ -28,8 +28,6 @@ BattleEyeClient.prototype = {
     this.socket.on("message", function(message, requestInfo) {
       this.parent.lastResponse = new Date().getTime()
       var buffer = new Buffer(message)
-
-      //Deal with login
       if(buffer[7] == 0x00) {
         if (buffer[8] == 0x01) {
             this.parent.loggedIn = true
@@ -79,7 +77,7 @@ BattleEyeClient.prototype = {
       }
       //Deal with command responses
       else if (buffer[7] == 0x01) {
-        if(this.parent.messageHandler) {
+        if(this.parent.messageHandler && !this.parent.stripHeaderServerMessage(message).toString() === "") {
           this.parent.messageHandler(this.parent.stripHeaderServerMessage(message).toString())
         }
       }
@@ -87,7 +85,7 @@ BattleEyeClient.prototype = {
     //connect
     this.login()
     //keep Alive
-    this.interval = setInterval( function(client) { client.keepAlive() }, 25000, this)
+    this.interval = setInterval( function(client) { client.keepAlive() }, 20000, this)
   },
   sendCommand: function(command) {
       //console.log("Sending: " + command)
@@ -122,8 +120,8 @@ BattleEyeClient.prototype = {
       buffer[0] = 0x01
       buffer[1] = 0
       buffer[2] = 0
-	  setTimeout(this.timeout, 3000, this);
       this.send(this.buildPacket(buffer))
+	  this.sendCommand("")
   },
   buildPacket: function (command) {
     //Buffer
