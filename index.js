@@ -122,6 +122,7 @@ BattleEyeClient.prototype = {
       buffer[0] = 0x01
       buffer[1] = 0
       buffer[2] = 0
+	  setTimeout(this.timeout, 3000, this);
       this.send(this.buildPacket(buffer))
   },
   buildPacket: function (command) {
