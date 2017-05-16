@@ -8,6 +8,7 @@ function BattleEyeClient (ip, port, password) {
   this.password = password
   this.messageHandler = undefined
   this.timeoutHandler = undefined
+  this.connectHandler = undefined
   this.sequenceNumber = 0
   this.loggedIn = false
   this.lastResponse = 0
@@ -31,14 +32,17 @@ BattleEyeClient.prototype = {
       if(buffer[7] == 0x00) {
         if (buffer[8] == 0x01) {
             this.parent.loggedIn = true
+			this.parent.connectHandler(true)
         } else if (buffer[8] == 0x00) {
             console.log("Login failed")
             this.parent.close()
+			this.parent.connectHandler(false)
             this.parent.loggedIn = false
             this.parent.error = true
         } else {
             console.log("Unkown error")
             this.parent.error = true
+			this.parent.connectHandler(false)
         }
         return;
       }
