@@ -89,7 +89,7 @@ BattleEyeClient.prototype = {
     //connect
     this.login()
     //keep Alive
-    this.interval = setInterval( function(client) { client.keepAlive() }, 20000, this)
+    this.interval = setInterval( function(client) { client.keepAlive() }, 25000, this)
   },
   sendCommand: function(command) {
       //console.log("Sending: " + command)
@@ -125,7 +125,9 @@ BattleEyeClient.prototype = {
       buffer[1] = 0
       buffer[2] = 0
       this.send(this.buildPacket(buffer))
-	  this.sendCommand("")
+	  if(new Date().getTime() - this.lastResponse > 25000) {
+		  this.sendCommand("")
+	  }
   },
   buildPacket: function (command) {
     //Buffer
